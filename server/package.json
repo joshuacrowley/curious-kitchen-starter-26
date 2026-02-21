@@ -1,0 +1,19 @@
+{
+  "name": "app-server",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev"
+  },
+  "dependencies": {
+    "tinybase": "^7.3.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260120.0",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.59.2"
+  }
+}
