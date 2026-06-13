@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spice Rack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&family=Space+Mono&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --shelf: #8b5a2b;
+      --shelf-dark: #6f4520;
+      --jar-body: #9e9e9e;
+      --jar-lid: #757575;
+      --jar-text: #1a1a1a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+      background: radial-gradient(circle at 50% 0%, #fdf6ec, #f3e3cf);
+      font-family: system-ui, sans-serif;
+      padding: 3rem 1.5rem;
+    }
+
+    h1 {
+      font-family: "Playfair Display", serif;
+      font-style: italic;
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      color: #5a3a1a;
+      margin: 0;
+      letter-spacing: 0.5px;
+    }
+
+    .rack {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 1rem;
+      padding: 2rem 1.25rem 1rem;
+      background: linear-gradient(var(--shelf), var(--shelf-dark));
+      border-radius: 10px;
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.25),
+        inset 0 2px 0 rgba(255, 255, 255, 0.15);
+      max-width: 1100px;
+    }
+
+    /* ---- Jar shell ---- */
+    .spice {
+      width: 112px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.15s ease;
+    }
+
+    .spice:hover {
+      transform: translateY(-8px) rotate(-1deg);
+    }
+
+    /* ---- Lid + knob ---- */
+    .lid {
+      width: 74px;
+      height: 20px;
+      background: var(--jar-lid);
+      border-radius: 6px 6px 3px 3px;
+      box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.25),
+        inset 0 -3px 4px rgba(0, 0, 0, 0.35);
+      position: relative;
+      z-index: 2;
+    }
+
+    .knob {
+      position: absolute;
+      top: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 26px;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 4px 4px 0 0;
+    }
+
+    .neck {
+      width: 58px;
+      height: 8px;
+      background: rgba(0, 0, 0, 0.18);
+    }
+
+    /* ---- Body ---- */
+    .body {
+      width: 100%;
+      border-radius: 8px 8px 6px 6px;
+      padding: 0.7rem 0.5rem 0.8rem;
+      background: var(--jar-body);
+      color: var(--jar-text);
+      text-align: center;
+      text-shadow: none;
+      box-shadow: 0 8px 14px rgba(0, 0, 0, 0.2),
+        inset 0 -8px 12px rgba(0, 0, 0, 0.15),
+        inset 0 8px 10px rgba(255, 255, 255, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* glass reflection running down one side */
+    .shine {
+      position: absolute;
+      top: 0;
+      left: 12%;
+      width: 16px;
+      height: 100%;
+      background: linear-gradient(
+        rgba(255, 255, 255, 0.28),
+        rgba(255, 255, 255, 0.04)
+      );
+      transform: skewX(-12deg);
+      pointer-events: none;
+    }
+
+    .name {
+      font-family: system-ui, Arial, sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      line-height: 1.1;
+      position: relative;
+    }
+
+    .origin {
+      font-family: "Space Mono", monospace;
+      font-size: 0.62rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+
+    .divider {
+      width: 60%;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.2);
+      margin: 0.15rem 0;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .tag {
+      font-size: 0.6rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    /* ---- Star rating ---- */
+    .rating {
+      display: flex;
+      gap: 2px;
+      font-size: 0.72rem;
+      line-height: 1;
+    }
+
+    .star { color: rgba(0, 0, 0, 0.2); }
+    .star.on { color: #555; text-shadow: none; }
+
+    /* ---- Fill-level meter ---- */
+    .meter {
+      width: 84%;
+      margin-top: 0.2rem;
+    }
+
+    .meter-label {
+      font-family: "Space Mono", monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.5px;
+      opacity: 0.8;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .bar {
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+
+    .fill {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.35);
+    }
+
+    .sku {
+      font-family: "Space Mono", monospace;
+      font-size: 0.5rem;
+      letter-spacing: 1px;
+      opacity: 0.6;
+      margin-top: 0.3rem;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>The Spice Rack</h1>
+
+  <div class="rack">
+    <div class="spice paprika">
+      <div class="lid"><span class="knob"></span></div>
+      <div class="neck"></div>
+      <div class="body">
+        <span class="shine"></span>
+        <span class="name">Paprika</span>
+        <span class="origin">Hungary</span>
+        <div class="divider"></div>
+        <div class="tags">
+          <span class="tag">🌶 Smoky</span>
+          <span class="tag">Mild</span>
+        </div>
+        <div class="rating">
+          <span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star">★</span>
+        </div>
+        <div class="meter">
+          <span class="meter-label">FILL 80%</span>
+          <span class="bar"><span class="fill" style="width: 80%"></span></span>
+        </div>
+        <span class="sku">SKU PAP-01</span>
+      </div>
+    </div>
+
+    <div class="spice basil">
+      <div class="lid"><span class="knob"></span></div>
+      <div class="neck"></div>
+      <div class="body">
+        <span class="shine"></span>
+        <span class="name">Basilico</span>
+        <span class="origin">Genova, Italia</span>
+        <div class="divider"></div>
+        <div class="tags">
+          <span class="tag">🌿 Fresco</span>
+          <span class="tag">Dolce</span>
+        </div>
+        <div class="rating">
+          <span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span>
+        </div>
+        <div class="meter">
+          <span class="meter-label">FILL 35%</span>
+          <span class="bar"><span class="fill" style="width: 35%"></span></span>
+        </div>
+        <span class="sku">SKU BAS-03</span>
+      </div>
+    </div>
+
+    <div class="spice cinnamon">
+      <div class="lid"><span class="knob"></span></div>
+      <div class="neck"></div>
+      <div class="body">
+        <span class="shine"></span>
+        <span class="name">Cinnamon</span>
+        <span class="origin">Sri Lanka</span>
+        <div class="divider"></div>
+        <div class="tags">
+          <span class="tag">🍂 Sweet</span>
+          <span class="tag">Warm</span>
+        </div>
+        <div class="rating">
+          <span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star">★</span>
+        </div>
+        <div class="meter">
+          <span class="meter-label">FILL 90%</span>
+          <span class="bar"><span class="fill" style="width: 90%"></span></span>
+        </div>
+        <span class="sku">SKU CIN-04</span>
+      </div>
+    </div>
+
+    <div class="spice saffron">
+      <div class="lid"><span class="knob"></span></div>
+      <div class="neck"></div>
+      <div class="body">
+        <span class="shine"></span>
+        <span class="name">Saffron</span>
+        <span class="origin">Iran</span>
+        <div class="divider"></div>
+        <div class="tags">
+          <span class="tag">✨ Floral</span>
+          <span class="tag">Rare</span>
+        </div>
+        <div class="rating">
+          <span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span>
+        </div>
+        <div class="meter">
+          <span class="meter-label">FILL 20%</span>
+          <span class="bar"><span class="fill" style="width: 20%"></span></span>
+        </div>
+        <span class="sku">SKU SAF-05</span>
+      </div>
+    </div>
+
+    <div class="spice pepper">
+      <div class="lid"><span class="knob"></span></div>
+      <div class="neck"></div>
+      <div class="body">
+        <span class="shine"></span>
+        <span class="name">Pepper</span>
+        <span class="origin">Vietnam</span>
+        <div class="divider"></div>
+        <div class="tags">
+          <span class="tag">⚫ Sharp</span>
+          <span class="tag">Pungent</span>
+        </div>
+        <div class="rating">
+          <span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star">★</span>
+        </div>
+        <div class="meter">
+          <span class="meter-label">FILL 70%</span>
+          <span class="bar"><span class="fill" style="width: 70%"></span></span>
+        </div>
+        <span class="sku">SKU PEP-06</span>
+      </div>
+    </div>
+
+    <div class="spice chili">
+      <div class="lid"><span class="knob"></span></div>
+      <div class="neck"></div>
+      <div class="body">
+        <span class="shine"></span>
+        <span class="name">Chili</span>
+        <span class="origin">Mexico</span>
+        <div class="divider"></div>
+        <div class="tags">
+          <span class="tag">🔥 Hot</span>
+          <span class="tag">Fiery</span>
+        </div>
+        <div class="rating">
+          <span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span>
+        </div>
+        <div class="meter">
+          <span class="meter-label">FILL 45%</span>
+          <span class="bar"><span class="fill" style="width: 45%"></span></span>
+        </div>
+        <span class="sku">SKU CHI-07</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
